@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace nillauncher
 {
@@ -30,6 +32,17 @@ namespace nillauncher
         public static void Parse(string [] arg)
         {
             var arguments = CommandLineArgumentParser.Parse(arg);
+            if (arguments.Has("-ff"))
+            {
+                Logger.info("loading setting from nillauncher.json...");
+                var tmp = JsonConvert.DeserializeObject<setting>(File.ReadAllText("nillauncher.json"));
+                ws_endport = tmp.ws_endport;
+                ws_port = tmp.ws_port;
+                ws_pwd = tmp.ws_key;
+                file = tmp.file;
+                rstart = tmp.restart;
+                return;
+            }
             if (arguments.Has("-f"))
             {
                 file = arguments.Get("-f").Next;
@@ -50,6 +63,14 @@ namespace nillauncher
             {
                 ws_pwd = arguments.Get("-pwd").Next;
             }
+        }
+        public class setting
+        {
+            public string ws_endport { get; set; }
+            public string ws_key { get; set; }
+            public int ws_port { get; set; }
+            public string file { get; set; }
+            public int restart { get; set; }
         }
     }
 }

@@ -19,7 +19,7 @@ namespace nillauncher
             Logger.info($"using pwd {Runtime.ws_pwd}");
             Logger.info($"using filepath {Runtime.file}");
             Logger.info($"using restarttime {Runtime.rstart}");
-            Logger.info("version 1.0.0.0");
+            Logger.info("version 1.0.3.1");
             ProcessHelper.start_bds();
             ws = new WSS(Runtime.ws_port, Runtime.ws_pwd,Runtime.ws_endport);
             new Thread(() =>

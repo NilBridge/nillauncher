@@ -41,6 +41,7 @@ namespace KWO
         };
         public static void on_regex(string input)
         {
+            if (string.IsNullOrEmpty(input)) return;
             foreach (var i in regexs)
             {
                 Match mat = Regex.Match(input, i.Regex);

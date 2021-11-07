@@ -62,8 +62,6 @@ namespace KWO
                     if (sockets.ContainsKey(socket))
                     {
                         Logger.warn($"connect error whit [{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort}]:{e.Message}");
-                        //sockets.Remove(socket); 
-                        socket.Close();
                     }
                 };
             });

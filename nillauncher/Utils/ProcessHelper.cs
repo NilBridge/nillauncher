@@ -56,6 +56,7 @@ namespace nillauncher.Utils
         private static void bds_exit(object sender, EventArgs e)
         {
             Logger.info("BDS进程退出");
+            Program.ws.sendClose();
             start_time++;
             if (!Runtime.exit_by_stop)
             {
