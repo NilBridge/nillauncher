@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 using XBridge.Config;
 using nillauncher;
 using nillauncher.Utils;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace KWO
 {
@@ -15,14 +17,14 @@ namespace KWO
         public static List<RegexItem> regexs = new List<RegexItem>
         {
             new RegexItem{
-                Regex = "\\[INFO\\] Player disconnected: (.+),",
+                Regex = "INFO\\] Player disconnected: (.+),",
                 @out = new Out{
-                    type = "lleft",
+                    type = "left",
                     text = "$1"
                 }
             },
             new RegexItem{
-                Regex = "\\[INFO\\] Player connected: (.+),",
+                Regex = "INFO\\] Player connected: (.+),",
                 @out = new Out
                 {
                     type = "join",
@@ -34,6 +36,15 @@ namespace KWO
                 @out = new Out
                 {
                     type = "chat",
+                    text = "$1|$2"
+                }
+            },
+            new RegexItem
+            {
+                Regex = @"\[Die\]\splayer\s<(.+?)>\skilled\sby\s<(.+?)>",
+                @out = new Out
+                {
+                    type = "mobdie",
                     text = "$1|$2"
                 }
             }
@@ -52,7 +63,6 @@ namespace KWO
                     {
                         o = o.Replace($"${io}", mat.Groups[io].Value);
                     }
-                    o = buildString(o);
                     try
                     {
                         on_regex_item(i.@out, o);
@@ -75,19 +85,28 @@ namespace KWO
                     Program.ws.sendEvent("left", o);
                     break;
                 case "log":
-                    Logger.info(o + Environment.NewLine);
+                    Logger.info(o);
                     break;
                 case "plantext":
                     Program.ws.sendPlanText(o);
                     break;
+                case "mobdie":
+                    Program.ws.sendMobDie(o.Split('|')[0], o.Split('|')[1]);
+                    break;
             }
         }
-        private static string buildString(string input)
-        {
-            StringBuilder builder = new StringBuilder(input);
-            builder.Replace("%random%", new Random().Next(1, 100).ToString());
-            builder.Replace("%datetime%", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            return builder.ToString();
+        public static void loadFile() {
+            string filepath = "nil_regex.json";
+            if (File.Exists(filepath) == false) {
+                File.WriteAllText(filepath,JsonConvert.SerializeObject(regexs,Formatting.Indented));
+            }
+            try
+            {
+                regexs = JsonConvert.DeserializeObject<List<RegexItem>>(File.ReadAllText(filepath));
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
         }
     }
 }

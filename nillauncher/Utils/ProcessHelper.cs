@@ -27,7 +27,7 @@ namespace nillauncher.Utils
             ps.StartInfo.RedirectStandardError = true;
             ps.StartInfo.WorkingDirectory = fi.DirectoryName;
             ps.EnableRaisingEvents = true;
-            ps.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+            ps.StartInfo.StandardOutputEncoding = Runtime.encoding;
             ps.Exited += bds_exit;
             ps.OutputDataReceived += bds_console_output;
             return ps;
@@ -40,18 +40,17 @@ namespace nillauncher.Utils
 
         public static void start_bds()
         {
+
             Runtime.bds = CreateProcess(Runtime.file);
-            
-                var b = new Thread(() =>
-                {
-                    Runtime.bds.Start();
-                    Runtime.bds.BeginErrorReadLine();
-                    Runtime.bds.BeginOutputReadLine();
-                    Runtime.bds.WaitForExit(0);
-                });
-                b.IsBackground = true;
-                b.Start();
-            
+            var b = new Thread(() =>
+            {
+                Runtime.bds.Start();
+                Runtime.bds.BeginErrorReadLine();
+                Runtime.bds.BeginOutputReadLine();
+                Runtime.bds.WaitForExit(0);
+            });
+            b.IsBackground = true;
+            b.Start();
         }
         private static void bds_exit(object sender, EventArgs e)
         {
@@ -68,6 +67,7 @@ namespace nillauncher.Utils
             }
             else
             {
+                Logger.info("输入start可重新启动");
                 start_time = 0;
             }
         }

@@ -15,12 +15,13 @@ namespace nillauncher
         public static int ws_port = 8080;
         public static string ws_endport = "/mcws";
         public static string ws_pwd = "password";
-        public static string file = "./bedrock_server.exe";
+        public static string file = "./bedrock_server_mod.exe";
         public static int rstart = 5;
         public static bool exit_by_stop = false;
         public static Process bds;
         public class is_list { public static bool @is = false;public static int line = 0; };
         public static bool is_runcmd = false;
+        public static Encoding encoding = Encoding.UTF8;
         public static void runcmd(string t)
         {
             if (t == "stop")
@@ -32,16 +33,33 @@ namespace nillauncher
         public static void Parse(string [] arg)
         {
             var arguments = CommandLineArgumentParser.Parse(arg);
-            if (arguments.Has("-ff"))
+            if (arguments.Has("-c"))
             {
-                Logger.info("loading setting from nillauncher.json...");
-                var tmp = JsonConvert.DeserializeObject<setting>(File.ReadAllText("nillauncher.json"));
+                string fp = arguments.Get("-c").Next;
+                Logger.info($"loading setting from {arguments.Get("-c").Next}");
+                if (!File.Exists(fp))
+                {
+                    var tmpf = new setting
+                    {
+                        ws_endport = ws_endport,
+                        ws_key = ws_pwd,
+                        ws_port = ws_port,
+                        file = file,
+                        restart = 5
+                    };
+                    File.WriteAllText(fp, JsonConvert.SerializeObject(tmpf, Formatting.Indented));
+                }
+                var tmp = JsonConvert.DeserializeObject<setting>(File.ReadAllText(arguments.Get("-c").Next));
                 ws_endport = tmp.ws_endport;
                 ws_port = tmp.ws_port;
                 ws_pwd = tmp.ws_key;
                 file = tmp.file;
                 rstart = tmp.restart;
                 return;
+            }
+            if (arguments.Has("-encod"))
+            {
+                encoding =Encoding.GetEncoding(arguments.Get("-encod").Next);
             }
             if (arguments.Has("-f"))
             {

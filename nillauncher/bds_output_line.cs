@@ -13,15 +13,25 @@ namespace nillauncher
         public static string tmp = string.Empty;
         public static void online(string dt)
         {
+            if (dt == null) return;
+            if (dt.Contains( "No targets matched selector")) return;
+            if (string.IsNullOrEmpty(dt)) return;
             if (Runtime.is_runcmd)
             {
-                
                 if (Runtime.is_list.@is)
                 {
                     switch(Runtime.is_list.line)
                     {
                         case 0:
+
                             tmp = dt;
+                            if(tmp.Contains("There are 0/"))
+                            {
+                                Runtime.is_list.@is = false;
+                                Program.ws.sendCMD(tmp+"\n");
+                                Runtime.is_runcmd = false;
+                                return;
+                            }
                             Runtime.is_list.line++;
                             return;
                         case 1:
@@ -37,7 +47,16 @@ namespace nillauncher
                 Runtime.is_runcmd = false;
                 return;
             }
-            regex.on_regex(dt);
+            try
+            {
+                regex.on_regex(dt);
+                if (dt.Contains("Server started."))
+                {
+                    Program.ws.sendStart();
+                    Runtime.exit_by_stop = false;
+                }
+            }
+            catch (Exception ex) { Logger.warn(ex.ToString()); }
             Console.WriteLine(dt);
         }
     }

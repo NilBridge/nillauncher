@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using nillauncher;
 using nillauncher.Utils;
+using System.IO;
 
 namespace KWO
 {
@@ -62,6 +63,8 @@ namespace KWO
                     if (sockets.ContainsKey(socket))
                     {
                         Logger.warn($"connect error whit [{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort}]:{e.Message}");
+                        sockets.Remove(socket);
+                        socket.Close();
                     }
                 };
             });
@@ -73,8 +76,25 @@ namespace KWO
                 var p = new
                 {
                     type = "pack",
-                    cause = "stop",
+                    cause = "server_stop",
                     @params = new { }
+                };
+                o.Key.Send(Encrypt.Encrypted(JsonConvert.SerializeObject(p), k, iv));
+            }
+        }
+        public void sendMobDie(string name,string mob)
+        {
+            foreach (var o in sockets)
+            {
+                var p = new
+                {
+                    type = "pack",
+                    cause = "mobdie",
+                    @params = new @params
+                    {
+                        mobname = name,
+                        srctype = mob
+                    }
                 };
                 o.Key.Send(Encrypt.Encrypted(JsonConvert.SerializeObject(p), k, iv));
             }
@@ -86,7 +106,7 @@ namespace KWO
                 var p = new
                 {
                     type = "pack",
-                    cause = "start",
+                    cause = "server_start",
                     @params = new { }
                 };
                 o.Key.Send(Encrypt.Encrypted(JsonConvert.SerializeObject(p), k, iv));
@@ -248,9 +268,36 @@ namespace KWO
                         socket.Send(GetDebugPack("请求失败：服务器已开启"));
                     }
                     break;
+                case "serverkill_request":
+                    if (Runtime.bds.HasExited)
+                    {
+                        socket.Send(GetDebugPack("请求失败：服务器不在运行中"));
+                    }
+                    else
+                    {
+                        Runtime.bds.Kill();
+                        socket.Send(GetDebugPack("正在停止进程"));
+                    }
+                    break;
+                case "backuprequest":
+                    if (Directory.Exists("./backups") == false) Directory.CreateDirectory("./backups");
+                    ZipHelper.ZipDirectory($"{AppContext.BaseDirectory}worlds/{getLevelName()}", $"./backups/{DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss")}.zip");
+                    break;
                 default:
                     break;
             }
+        }
+        static string getLevelName()
+        {
+            string[] pro = File.ReadAllLines("server.properties");
+            foreach (string line in pro)
+            {
+                if (line.StartsWith("level-name"))
+                {
+                    return line.Substring("level-name=".Length);
+                }
+            }
+            return "Bedrock level";
         }
         private void SendAllText(string t)
         {
