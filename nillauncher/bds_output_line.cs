@@ -50,7 +50,7 @@ namespace nillauncher
             try
             {
                 regex.on_regex(dt);
-                if (dt.Contains("Server started."))
+                if (dt.Contains("Server started.") || dt.Contains("For help, type \"help\" or \"?\""))
                 {
                     Program.ws.sendStart();
                     Runtime.exit_by_stop = false;

@@ -17,14 +17,14 @@ namespace KWO
         public static List<RegexItem> regexs = new List<RegexItem>
         {
             new RegexItem{
-                Regex = "INFO\\] Player disconnected: (.+),",
+                Regex = "Player disconnected: (.+),",
                 @out = new Out{
                     type = "left",
                     text = "$1"
                 }
             },
             new RegexItem{
-                Regex = "INFO\\] Player connected: (.+),",
+                Regex = "Player connected: (.+),",
                 @out = new Out
                 {
                     type = "join",
@@ -32,7 +32,7 @@ namespace KWO
                 }
             },
             new RegexItem{
-                Regex = "\\[Chat\\]\\s<(.+?)> (.+)",
+                Regex = @"\[Chat\] <(.+?)> (.+)",
                 @out = new Out
                 {
                     type = "chat",
@@ -41,7 +41,7 @@ namespace KWO
             },
             new RegexItem
             {
-                Regex = @"\[Die\]\splayer\s<(.+?)>\skilled\sby\s<(.+?)>",
+                Regex = @"\[Die\] player <(.+?)> killed by <(.+?)>",
                 @out = new Out
                 {
                     type = "mobdie",

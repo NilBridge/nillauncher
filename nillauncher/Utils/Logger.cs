@@ -10,11 +10,11 @@ namespace nillauncher.Utils
     {
         public static void info(string t)
         {
-            Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} INFO] {t}");
+            Console.WriteLine($"{DateTime.Now.ToString(" HH:mm:ss")} INFO [Nillauncher] {t}");
         }
         public static void warn(string t)
         {
-            Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} WARN] {t}");
+            Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} WARN [Nillauncher] {t}");
         }
     }
 }
