@@ -5,12 +5,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 namespace nillauncher
 {
     class bds_output_line
     {
         public static string tmp = string.Empty;
+        public static bool build(string input)
+        {
+            Match mat = Regex.Match(input,@"(.+) INFO \[(.+)\] (.+)");
+            if (mat.Success)
+            {
+                Logger.info(mat.Groups[3].Value, mat.Groups[2].Value);
+                return false;
+            }
+            else
+            {
+                Match mat2 = Regex.Match(input,@"(.+) WARN \[(.+)\] (.+)");
+                if (mat2.Success)
+                {
+
+                    Logger.warn(mat2.Groups[3].Value, mat2.Groups[2].Value);
+                    return false;
+                }
+            }
+            return true;
+        }
         public static void online(string dt)
         {
             if (dt == null) return;
@@ -57,7 +78,15 @@ namespace nillauncher
                 }
             }
             catch (Exception ex) { Logger.warn(ex.ToString()); }
-            Console.WriteLine(dt);
+            try
+            {
+                if (build(dt)) Console.WriteLine(dt);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(dt);
+            }
+
         }
     }
 }

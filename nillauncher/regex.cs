@@ -72,6 +72,11 @@ namespace KWO
                 }
             }
         }
+        public static void test()
+        {
+            var reg = new Regex(@"(.+) INFO \[(.+)\] (.+)");
+
+        }
         private static void on_regex_item(Out it, string o)
         {
             switch (it.type) {

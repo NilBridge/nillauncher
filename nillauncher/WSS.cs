@@ -54,7 +54,7 @@ namespace KWO
                 {
                     if (sockets.ContainsKey(socket))
                     {
-                        Logger.info($"connect lost [{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort}]");
+                        Logger.warn($"connect lost [{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort}]");
                         sockets.Remove(socket);
                     }
                 };
@@ -281,9 +281,19 @@ namespace KWO
                     break;
                 case "backuprequest":
                     if (Directory.Exists("./backups") == false) Directory.CreateDirectory("./backups");
-                    ZipHelper.ZipDirectory($"{AppContext.BaseDirectory}worlds/{getLevelName()}", $"./backups/{DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss")}.zip");
+                    try
+                    {
+                        Logger.info("backuping...");
+                        ZipHelper.Zip($"{AppContext.BaseDirectory}worlds/{getLevelName()}", $"./backups/{DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss")}.zip");
+                        Logger.info("备份成功！");
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.warn($"备份失败：{e}");
+                    }
                     break;
                 default:
+                    Logger.warn($"收到未知的数据包 >> {jj["action"]}");
                     break;
             }
         }

@@ -54,9 +54,9 @@ namespace nillauncher.Utils
         }
         private static void bds_exit(object sender, EventArgs e)
         {
-            Logger.info("BDS进程退出");
-            Program.ws.sendClose();
             start_time++;
+            Logger.info($"BDS进程退出，当前非正常启动次数：{start_time}");
+            Program.ws.sendClose();
             if (!Runtime.exit_by_stop)
             {
                 if (start_time != Runtime.rstart)
@@ -68,6 +68,8 @@ namespace nillauncher.Utils
             else
             {
                 Logger.info("输入start可重新启动");
+                Logger.info("输入backup进行备份");
+                Logger.info("输入exit退出程序");
                 start_time = 0;
             }
         }
