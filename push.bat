@@ -1,5 +1,5 @@
 git add .
 git commit -m "fix"
-git pushd
+git push
 
 pause
