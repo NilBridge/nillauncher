@@ -13,21 +13,39 @@ namespace nillauncher
     public  class Runtime
     {
         public static int ws_port = 8080;
+        static Dictionary<string, int> cmdLines;
         public static string ws_endport = "/mcws";
         public static string ws_pwd = "password";
         public static string file = "./bedrock_server_mod.exe";
         public static int rstart = 5;
         public static bool exit_by_stop = false;
         public static Process bds;
-        public class is_list { public static bool @is = false;public static int line = 0; };
-        public static bool is_runcmd = false;
+        public static class is_runcmd { public static bool @running = false; public static int line = 0; };
         public static Encoding encoding = Encoding.UTF8;
-        public static void runcmd(string t)
+        public static void LoadFile()
         {
+            if (File.Exists("nil_runcmd.json") == false)
+            {
+                File.WriteAllText("nil_runcmd.json", JsonConvert.SerializeObject(new { list = 2 },Formatting.Indented));
+            }
+            cmdLines = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText("nil_runcmd.json"));
+        }
+        public static void runcmd(string t, bool is_ws = true)
+        {
+            if (is_ws)
+            {
+                is_runcmd.running = is_ws;
+                if (cmdLines.ContainsKey(t))
+                {
+                    is_runcmd.line = cmdLines[t];
+                }
+                else
+                {
+                    is_runcmd.line = 1;
+                }
+            }
             if (t == "stop")
                 exit_by_stop = true;
-            if (t == "list")
-                is_list.@is = true;
             bds.StandardInput.WriteLine(t);
         }
         public static void Parse(string [] arg)

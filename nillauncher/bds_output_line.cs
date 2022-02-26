@@ -7,11 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using System.IO;
+
 namespace nillauncher
 {
     class bds_output_line
     {
         public static string tmp = string.Empty;
+        static int maching = 0;
         public static bool build(string input)
         {
             Match mat = Regex.Match(input,@"(.+) INFO \[(.+)\] (.+)");
@@ -37,35 +40,18 @@ namespace nillauncher
             if (dt == null) return;
             if (dt.Contains( "No targets matched selector")) return;
             if (string.IsNullOrEmpty(dt)) return;
-            if (Runtime.is_runcmd)
+            if (Runtime.is_runcmd.running)
             {
-                if (Runtime.is_list.@is)
+                tmp += dt + '\n';
+                maching++;
+                if (maching == Runtime.is_runcmd.line)
                 {
-                    switch(Runtime.is_list.line)
-                    {
-                        case 0:
-
-                            tmp = dt;
-                            if(tmp.Contains("There are 0/"))
-                            {
-                                Runtime.is_list.@is = false;
-                                Program.ws.sendCMD(tmp+"\n");
-                                Runtime.is_runcmd = false;
-                                return;
-                            }
-                            Runtime.is_list.line++;
-                            return;
-                        case 1:
-                            Runtime.is_list.line = 0;
-                            tmp += "\n" + dt;
-                            Runtime.is_list.@is = false;
-                            Program.ws.sendCMD(tmp);
-                            Runtime.is_runcmd = false;
-                            return;
-                    }
+                    Program.ws.sendCMD(tmp);
+                    tmp = string.Empty;
+                    Runtime.is_runcmd.running = false;
+                    maching = 0;
+                    return;
                 }
-                Program.ws.sendCMD(dt);
-                Runtime.is_runcmd = false;
                 return;
             }
             try

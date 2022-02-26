@@ -42,6 +42,7 @@ namespace nillauncher.Utils
         {
 
             Runtime.bds = CreateProcess(Runtime.file);
+            Runtime.exit_by_stop = false;
             var b = new Thread(() =>
             {
                 Runtime.bds.Start();
@@ -54,8 +55,8 @@ namespace nillauncher.Utils
         }
         private static void bds_exit(object sender, EventArgs e)
         {
-            start_time++;
             Logger.info($"BDS进程退出，当前非正常启动次数：{start_time}");
+            start_time++;
             Program.ws.sendClose();
             if (!Runtime.exit_by_stop)
             {
@@ -63,6 +64,10 @@ namespace nillauncher.Utils
                 {
                     Logger.info("进程非正常退出，即将重启");
                     start_bds();
+                }
+                else
+                {
+                    Logger.info("达到最大重启次数，放弃重启");
                 }
             }
             else

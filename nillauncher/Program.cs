@@ -25,7 +25,7 @@ namespace nillauncher
             switch (CtrlType)
             {
                 case 0:
-                    Logger.warn("0工具被强制关闭"); //Ctrl+C关闭  
+                    Logger.warn("工具被强制关闭"); //Ctrl+C关闭  
                     if(Runtime.bds.HasExited==false)
                         Runtime.bds.Kill();
                     break;
@@ -39,14 +39,14 @@ namespace nillauncher
         }
         static void Main(string[] args)
         {
-
+            Runtime.LoadFile();
             RemoveCloseMenu();
             SetConsoleCtrlHandler(cancelHandler, true);
             Runtime.Parse(args);
             Logger.info($"using pwd {Runtime.ws_pwd}");
             Logger.info($"using filepath {Runtime.file}");
             Logger.info($"using restarttime {Runtime.rstart}");
-            Logger.info("version 1.0.5.6");
+            Logger.info("version 1.0.5.8");
             regex.loadFile();
             ProcessHelper.start_bds();
             ws = new WSS(Runtime.ws_port, Runtime.ws_pwd,Runtime.ws_endport);
@@ -57,7 +57,7 @@ namespace nillauncher
                     string line = Console.ReadLine();
                     if (!Runtime.bds.HasExited)
                     {
-                        Runtime.runcmd(line);
+                        Runtime.runcmd(line,false);
                     }
                     else
                     {
@@ -67,16 +67,18 @@ namespace nillauncher
                                 break;
                             case "backup":
                                 if (Directory.Exists("backups") == false) { Directory.CreateDirectory("backups"); }
+                                Runtime.runcmd("save hold");
                                 try
                                 {
-                                    Logger.info("backuping...");
-                                    ZipHelper.Zip($"{AppContext.BaseDirectory}worlds/{getLevelName()}", $"./backups/{DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss")}.zip");
+                                    Logger.info("backuping " + getLevelName());
+                                    ZipHelper.CompressDirectory($@"{new FileInfo(Runtime.file).DirectoryName}\worlds\{getLevelName()}\", $"./backups/{DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss")}.zip",false);
                                     Logger.info("备份成功！");
                                 }
                                 catch(Exception e)
                                 {
                                     Logger.warn($"备份失败：{e}");
                                 }
+                                Runtime.runcmd("save resume");
                                 //R7z.R7Zip($"{AppContext.BaseDirectory}worlds/{getLevelName()}", $"./backups/{DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss")}.7z");
                                 break;
                             case "exit":

@@ -233,7 +233,7 @@ namespace KWO
                         }
                         sockets[socket] = j.id;
                         tmpid = j.id;
-                        Runtime.is_runcmd = true;
+                        Runtime.is_runcmd.running = true;
                         runcmd(j.cmd);
                     }
                     catch (Exception e) { Logger.warn($"error when runcmd >>{e.Message}<<" + Environment.NewLine); }
@@ -280,17 +280,19 @@ namespace KWO
                     }
                     break;
                 case "backuprequest":
-                    if (Directory.Exists("./backups") == false) Directory.CreateDirectory("./backups");
+                    if (Directory.Exists("backups") == false) { Directory.CreateDirectory("backups"); }
+                    runcmd("save hold");
                     try
                     {
-                        Logger.info("backuping...");
-                        ZipHelper.Zip($"{AppContext.BaseDirectory}worlds/{getLevelName()}", $"./backups/{DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss")}.zip");
+                        Logger.info("backuping " + getLevelName());
+                        ZipHelper.CompressDirectory($@"{new FileInfo(Runtime.file).DirectoryName}\worlds\{getLevelName()}\", $"./backups/{DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss")}.zip", false);
                         Logger.info("备份成功！");
                     }
                     catch (Exception e)
                     {
                         Logger.warn($"备份失败：{e}");
                     }
+                    runcmd("save resume");
                     break;
                 default:
                     Logger.warn($"收到未知的数据包 >> {jj["action"]}");
