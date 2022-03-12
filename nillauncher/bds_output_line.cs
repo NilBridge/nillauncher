@@ -17,7 +17,7 @@ namespace nillauncher
         static int maching = 0;
         public static bool build(string input)
         {
-            Match mat = Regex.Match(input,@"(.+) INFO \[(.+)\] (.+?)");
+            Match mat = Regex.Match(input,@"(.+) INFO \[(.+)\] (.+)");
             if (mat.Success)
             {
                 Logger.info(mat.Groups[3].Value, mat.Groups[2].Value);
@@ -25,7 +25,7 @@ namespace nillauncher
             }
             else
             {
-                Match mat2 = Regex.Match(input,@"(.+) WARN \[(.+)\] (.+?)");
+                Match mat2 = Regex.Match(input,@"(.+) WARN \[(.+)\] (.+)");
                 if (mat2.Success)
                 {
 

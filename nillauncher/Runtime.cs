@@ -43,7 +43,7 @@ namespace nillauncher
                     {
                         if (Regex.Match(t, i.Key).Success)
                         {
-                            is_runcmd.line = cmdLines[t];
+                            is_runcmd.line = i.Value;
                         }
                     }
                 }
@@ -85,7 +85,7 @@ namespace nillauncher
             }
             if (arguments.Has("-encod"))
             {
-                encoding =Encoding.GetEncoding(arguments.Get("-encod").Next);
+                encoding = Encoding.GetEncoding(arguments.Get("-encod").Next);
             }
             if (arguments.Has("-f"))
             {
