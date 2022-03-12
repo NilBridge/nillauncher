@@ -32,7 +32,7 @@ namespace nillauncher
                 case 2:
                     Logger.warn("工具被强制关闭");//按控制台关闭按钮关闭  
                     if (Runtime.bds.HasExited == false)
-                        Runtime.bds.Kill();
+                        Runtime.bds.Kill(); 
                     break;
             }
             return false;
