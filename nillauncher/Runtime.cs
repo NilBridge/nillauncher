@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using System.IO;
 
@@ -35,13 +36,20 @@ namespace nillauncher
             if (is_ws)
             {
                 is_runcmd.running = is_ws;
-                if (cmdLines.ContainsKey(t))
+                is_runcmd.line = 1;
+                try
                 {
-                    is_runcmd.line = cmdLines[t];
+                    foreach (var i in cmdLines)
+                    {
+                        if (Regex.Match(t, i.Key).Success)
+                        {
+                            is_runcmd.line = cmdLines[t];
+                        }
+                    }
                 }
-                else
+                catch(Exception err)
                 {
-                    is_runcmd.line = 1;
+                    Logger.warn(err.ToString());
                 }
             }
             if (t == "stop")

@@ -315,7 +315,7 @@ namespace KWO
         {
             try
             {
-                Runtime.runcmd("tellraw @a {\"rawtext\":[{\"text\":\"" + StringToUnicode(t) + "\"}]}");
+                Runtime.runcmd("tellraw @a {\"rawtext\":[{\"text\":\"" + StringToUnicode(t) + "\"}]}",false);
             }
             catch { }
 
