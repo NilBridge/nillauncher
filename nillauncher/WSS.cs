@@ -76,7 +76,7 @@ namespace KWO
                 var p = new
                 {
                     type = "pack",
-                    cause = "server_stop",
+                    cause = "stop",
                     @params = new { }
                 };
                 o.Key.Send(Encrypt.Encrypted(JsonConvert.SerializeObject(p), k, iv));
@@ -106,7 +106,7 @@ namespace KWO
                 var p = new
                 {
                     type = "pack",
-                    cause = "server_start",
+                    cause = "start",
                     @params = new { }
                 };
                 o.Key.Send(Encrypt.Encrypted(JsonConvert.SerializeObject(p), k, iv));
@@ -161,6 +161,31 @@ namespace KWO
                     }
                 };
                 i.Key.Send(Encrypt.Encrypted(JsonConvert.SerializeObject(p), k, iv));
+            }
+        }
+        public string getOccupancyPack()
+        {
+            return Encrypt.Encrypted(JsonConvert.SerializeObject(new {
+                type = "pack",
+                cause = "occupancy",
+                @parmas = new
+                {
+                    Memory=ComputerInfo.Memory(),
+                    CPU = ComputerInfo.CPU()
+                }
+            }),k,iv);
+        }
+        public void sendStop()
+        {
+            foreach(var o in sockets)
+            {
+                var p = new
+                {
+                    type = "pack",
+                    cause = "accident_stop",
+                    @params = new {}
+                };
+                o.Key.Send(Encrypt.Encrypted(JsonConvert.SerializeObject(p), k, iv));
             }
         }
         public string sendError(string msg)
@@ -293,6 +318,9 @@ namespace KWO
                         Logger.warn($"备份失败：{e}");
                     }
                     runcmd("save resume");
+                    break;
+                case "occupancy":
+                    socket.Send(getOccupancyPack());
                     break;
                 default:
                     Logger.warn($"收到未知的数据包 >> {jj["action"]}");
