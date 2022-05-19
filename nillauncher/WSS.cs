@@ -168,7 +168,7 @@ namespace KWO
             return Encrypt.Encrypted(JsonConvert.SerializeObject(new {
                 type = "pack",
                 cause = "occupancy",
-                @parmas = new
+                @params = new
                 {
                     Memory=ComputerInfo.Memory(),
                     CPU = ComputerInfo.CPU()

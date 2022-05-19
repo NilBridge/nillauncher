@@ -27,7 +27,7 @@ namespace nillauncher
         {
             if (File.Exists("nil_runcmd.json") == false)
             {
-                File.WriteAllText("nil_runcmd.json", JsonConvert.SerializeObject(new { list = 2 },Formatting.Indented));
+                File.WriteAllText("nil_runcmd.json", "{\n\t\"^list$\":2\n}");
             }
             cmdLines = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText("nil_runcmd.json"));
         }
